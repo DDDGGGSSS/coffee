@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full bg-stone-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aroma Coffee - Заказ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            450: '#D97706',
+                            850: '#451a03',
+                            950: '#1c0a00',
+                        },
+                        coffee: {
+                            light: '#F5EBE1',
+                            accent: '#C89355',
+                            dark: '#2A1E17',
+                            card: '#1F1713'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Marcellus', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-panel {
+            background: rgba(31, 23, 19, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 147, 85, 0.15);
+        }
+        .glass-card {
+            background: rgba(42, 30, 23, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200, 147, 85, 0.1);
+        }
+    </style>
+</head>
+<body class="h-full text-stone-200 font-sans flex flex-col bg-stone-950 selection:bg-amber-700 selection:text-white">
+
+    <header class="sticky top-0 z-30 glass-panel border-b border-amber-900/30">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-500 text-xl shadow-lg">
+                    <i class="fa-solid font-bold fa-mug-hot"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl font-bold tracking-wide text-amber-100">Aroma Coffee</h1>
+                    <p class="text-xs text-amber-400/80">Заказ напитков и десертов</p>
+                </div>
+            </div>
+
+            <!-- Cart Trigger Button -->
+            <button id="cartToggleBtn" onclick="openCart()" class="relative bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white px-4 py-2.5 rounded-xl shadow-lg transition duration-200 flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span class="hidden sm:inline">Корзина</span>
+                <span id="cartBadge" class="bg-stone-900 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center border border-amber-500/30">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6">
+        <div class="relative rounded-2xl overflow-hidden mb-8 border border-amber-900/30 bg-stone-900 shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/80 to-transparent z-10"></div>
+            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80" alt="Кофейня" class="w-full h-44 sm:h-56 object-cover object-center opacity-60">
+            <div class="absolute inset-0 z-20 p-6 flex flex-col justify-center max-w-md">
+                <span class="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-1"><i class="fa-solid fa-sparkles mr-1"></i> Уютная атмосфера</span>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-stone-100 mb-2">Свежесваренный кофе в заведении и с доставкой</h2>
+                <p class="text-xs sm:text-sm text-stone-300">Выберите напитки, укажите удобный способ получения и мы сразу приступим к приготовлению!</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar mb-6 pb-2">
+            <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border border-amber-500/30 bg-amber-600 text-white shadow-md shadow-amber-900/20" data-cat="all">
+                <i class="fa-solid fa-border-all mr-1.5"></i> Все
+            </button>
+            <button onclick="filterCategory('coffee')" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border border-stone-800 bg-stone-900/80 text-stone-300 hover:border-amber-700/50" data-cat="coffee">
+                <i class="fa-solid fa-mug-saucer mr-1.5 text-amber-500"></i> Кофе
+            </button>
+            <button onclick="filterCategory('tea')" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border border-stone-800 bg-stone-900/80 text-stone-300 hover:border-amber-700/50" data-cat="tea">
+                <i class="fa-solid fa-leaf mr-1.5 text-emerald-500"></i> Чай и Матча
+            </button>
+            <button onclick="filterCategory('pastry')" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border border-stone-800 bg-stone-900/80 text-stone-300 hover:border-amber-700/50" data-cat="pastry">
+                <i class="fa-solid fa-croissant mr-1.5 text-amber-400"></i> Выпечка
+            </button>
+            <button onclick="filterCategory('special')" class="cat-btn px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border border-stone-800 bg-stone-900/80 text-stone-300 hover:border-amber-700/50" data-cat="special">
+                <i class="fa-solid fa-glass-water mr-1.5 text-cyan-400"></i> Фирменные
+            </button>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Products injected by JS -->
+        </div>
+    </main>
+
+    <div id="customModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel bg-stone-900 w-full max-w-md rounded-2xl overflow-hidden border border-amber-600/30 shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-900/90">
+                <h3 id="modalTitle" class="font-serif text-lg font-bold text-amber-100">Настройка напитка</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto space-y-4 text-sm">
+                <!-- Milk selection -->
+                <div id="milkGroup">
+                    <label class="block font-semibold text-amber-300 mb-2">Выбор молока:</label>
+                    <div class="grid grid-cols-2 gap-2" id="milkOptions">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Syrup Selection -->
+                <div id="syrupGroup">
+                    <label class="block font-semibold text-amber-300 mb-2">Сироп (+50 ₸):</label>
+                    <div class="grid grid-cols-2 gap-2" id="syrupOptions">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Extra shot -->
+                <div id="extraGroup">
+                    <label class="block font-semibold text-amber-300 mb-2">Дополнительно:</label>
+                    <label class="flex items-center justify-between p-3 rounded-xl bg-stone-800/60 border border-stone-700 cursor-pointer">
+                        <span class="text-stone-300">Дополнительный шот эспрессо (+150 ₸)</span>
+                        <input type="checkbox" id="extraShotCheckbox" class="w-4 h-4 accent-amber-600 rounded">
+                    </label>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-stone-800 bg-stone-900/90 flex items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs text-stone-400 block">Итого за позицию:</span>
+                    <span id="modalTotalPrice" class="font-bold text-amber-400 text-lg">0 ₸</span>
+                </div>
+                <button id="modalAddBtn" onclick="confirmAddToCart()" class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-medium px-5 py-2.5 rounded-xl transition shadow-lg">
+                    В корзину
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex justify-end transition-opacity">
+        <div class="w-full max-w-md bg-stone-900 h-full flex flex-col border-l border-amber-900/30 shadow-2xl">
+            <!-- Header -->
+            <div class="p-4 border-b border-stone-800 flex justify-between items-center bg-stone-950">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping text-amber-500"></i>
+                    <h3 class="font-serif text-lg font-bold text-stone-100">Ваш заказ</h3>
+                </div>
+                <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Items List -->
+            <div id="cartItemsContainer" class="flex-grow p-4 overflow-y-auto space-y-3">
+                <!-- Cart items inserted by JS -->
+            </div>
+
+            <!-- Checkout Form -->
+            <div class="p-4 border-t border-stone-800 bg-stone-950/90 space-y-3">
+                <!-- Order Type Switcher -->
+                <div>
+                    <label class="block text-xs font-semibold text-amber-400 mb-1">Способ получения</label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-stone-800 rounded-xl border border-stone-700">
+                        <button type="button" id="typeInDine" onclick="setOrderType('dine_in')" class="py-2 text-xs font-semibold rounded-lg transition bg-amber-600 text-white">
+                            <i class="fa-solid fa-chair mr-1"></i> В кофейне
+                        </button>
+                        <button type="button" id="typeDelivery" onclick="setOrderType('delivery')" class="py-2 text-xs font-semibold rounded-lg transition text-stone-400 hover:text-white">
+                            <i class="fa-solid fa-truck-fast mr-1"></i> Доставка
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Field for Dine-in -->
+                <div id="dineInFields">
+                    <label for="tableNumber" class="block text-xs font-semibold text-amber-400 mb-1">
+                        <i class="fa-solid fa-chair mr-1"></i> Номер вашего столика <span class="text-red-400">*</span>
+                    </label>
+                    <input type="number" id="tableNumber" min="1" max="99" placeholder="Например: 5" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-500 transition">
+                </div>
+
+                <!-- Fields for Delivery -->
+                <div id="deliveryFields" class="hidden space-y-2">
+                    <div>
+                        <label for="deliveryPhone" class="block text-xs font-semibold text-amber-400 mb-1">
+                            <i class="fa-solid fa-phone mr-1"></i> Номер телефона <span class="text-red-400">*</span>
+                        </label>
+                        <input type="tel" id="deliveryPhone" placeholder="+7 (707) 000-00-00" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                    <div>
+                        <label for="deliveryAddress" class="block text-xs font-semibold text-amber-400 mb-1">
+                            <i class="fa-solid fa-location-dot mr-1"></i> Адрес доставки <span class="text-red-400">*</span>
+                        </label>
+                        <input type="text" id="deliveryAddress" placeholder="Улица, дом, квартира/офис" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="orderComment" class="block text-xs font-semibold text-stone-300 mb-1">
+                        <i class="fa-solid fa-comment-dots mr-1"></i> Комментарий к заказу
+                    </label>
+                    <textarea id="orderComment" rows="2" placeholder="Пожелания (без сахара, звонок в дверь и т.д.)..." class="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-500 transition resize-none"></textarea>
+                </div>
+
+                <div class="border-t border-stone-800 pt-2 flex justify-between items-center">
+                    <span class="text-stone-300 font-medium">Итого к оплате:</span>
+                    <span id="cartTotalPrice" class="text-xl font-bold text-amber-400">0 ₸</span>
+                </div>
+
+                <button id="sendOrderBtn" onclick="submitOrder()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-paper-plane fa-brands"></i> Отправить заказ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 max-w-sm bg-stone-800 text-white px-4 py-3 rounded-xl shadow-2xl border border-stone-700 hidden flex items-center gap-3 transition-all">
+        <div id="toastIcon" class="text-amber-400 text-lg"></div>
+        <p id="toastMessage" class="text-sm font-medium"></p>
+    </div>
+
+    <script>
+        // Telegram Bot Credentials
+        const BOT_TOKEN = "8675708714:AAG-yseGmw3nhd37fuS0bPrN0AuZ3-Fekts";
+        const CHAT_ID = "7412921030";
+
+        // Menu Data
+        const products = [
+            {
+                id: 1,
+                name: "Латте",
+                category: "coffee",
+                price: 1100,
+                description: "Нежный кофейный напиток с шелковистой молочной пеной.",
+                image: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=500&q=80",
+                customizable: true
+            },
+            {
+                id: 2,
+                name: "Капучино",
+                category: "coffee",
+                price: 1000,
+                description: "Классический баланс насыщенного эспрессо и пышной пены.",
+                image: "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=500&q=80",
+                customizable: true
+            },
+            {
+                id: 3,
+                name: "Флэт Уайт",
+                category: "coffee",
+                price: 1200,
+                description: "Двойной эспрессо с бархатистым взбитым молоком.",
+                image: "https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=500&q=80",
+                customizable: true
+            },
+            {
+                id: 4,
+                name: "Американо",
+                category: "coffee",
+                price: 800,
+                description: "Эспрессо с добавлением горячей воды. Классика чистого вкуса.",
+                image: "https://images.unsplash.com/photo-1551033406-611cf9a28f67?auto=format&fit=crop&w=500&q=80",
+                customizable: false
+            },
+            {
+                id: 5,
+                name: "Матча Латте",
+                category: "tea",
+                price: 1400,
+                description: "Японский зеленый чай матча с нежным взбитым молоком.",
+                image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=500&q=80",
+                customizable: true
+            },
+            {
+                id: 6,
+                name: "Чай Эрл Грей",
+                category: "tea",
+                price: 900,
+                description: "Ароматный черный чай с нотками бергамота.",
+                image: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=500&q=80",
+                customizable: false
+            },
+            {
+                id: 7,
+                name: "Раф Арахисовый",
+                category: "special",
+                price: 1500,
+                description: "Десертный кофе с натуральной арахисовой пастой и сливками.",
+                image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=500&q=80",
+                customizable: true
+            },
+            {
+                id: 8,
+                name: "Шоколадный Круассан",
+                category: "pastry",
+                price: 950,
+                description: "Хрустящий круассан со щедрой начинкой из бельгийского шоколада.",
+                image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=500&q=80",
+                customizable: false
+            },
+            {
+                id: 9,
+                name: "Чизкейк Сан-Себастьян",
+                category: "pastry",
+                price: 1300,
+                description: "Нежнейший опаленный чизкейк с кремовой текстурой.",
+                image: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?auto=format&fit=crop&w=500&q=80",
+                customizable: false
+            }
+        ];
+
+        // Options
+        const milkTypes = [
+            { id: "cow", name: "Обычное молоко", price: 0 },
+            { id: "coconut", name: "Кокосовое молоко", price: 200 },
+            { id: "oat", name: "Овсяное молоко", price: 200 },
+            { id: "almond", name: "Миндальное молоко", price: 250 }
+        ];
+
+        const syrupTypes = [
+            { id: "none", name: "Без сиропа", price: 0 },
+            { id: "vanilla", name: "Ваниль", price: 50 },
+            { id: "caramel", name: "Соленая карамель", price: 50 },
+            { id: "hazelnut", name: "Фундук", price: 50 }
+        ];
+
+        // Application State
+        let cart = [];
+        let currentCustomProduct = null;
+        let selectedMilk = milkTypes[0];
+        let selectedSyrup = syrupTypes[0];
+        let currentOrderType = 'dine_in'; // 'dine_in' or 'delivery'
+
+        function setOrderType(type) {
+            currentOrderType = type;
+            const btnDine = document.getElementById('typeInDine');
+            const btnDelivery = document.getElementById('typeDelivery');
+            const dineFields = document.getElementById('dineInFields');
+            const deliveryFields = document.getElementById('deliveryFields');
+
+            if (type === 'dine_in') {
+                btnDine.className = "py-2 text-xs font-semibold rounded-lg transition bg-amber-600 text-white";
+                btnDelivery.className = "py-2 text-xs font-semibold rounded-lg transition text-stone-400 hover:text-white";
+                dineFields.classList.remove('hidden');
+                deliveryFields.classList.add('hidden');
+            } else {
+                btnDelivery.className = "py-2 text-xs font-semibold rounded-lg transition bg-amber-600 text-white";
+                btnDine.className = "py-2 text-xs font-semibold rounded-lg transition text-stone-400 hover:text-white";
+                deliveryFields.classList.remove('hidden');
+                dineFields.classList.add('hidden');
+            }
+        }
+
+        function renderProducts(categoryFilter = 'all') {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            const filtered = categoryFilter === 'all' 
+                ? products 
+                : products.filter(p => p.category === categoryFilter);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl overflow-hidden hover:border-amber-500/40 transition duration-300 flex flex-col justify-between group";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 bg-stone-900/80 backdrop-blur-md border border-amber-500/30 text-amber-400 font-bold text-sm px-3 py-1 rounded-full">
+                                ${p.price} ₸
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-serif text-lg font-bold text-stone-100 mb-1">${p.name}</h3>
+                            <p class="text-stone-400 text-xs leading-relaxed line-clamp-2">${p.description}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        <button onclick="handleAddToCart(${p.id})" class="w-full bg-stone-800 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-600/30 font-medium py-2 rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            ${p.customizable ? 'Выбрать и добавить' : 'В корзину'}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.classList.add('bg-amber-600', 'text-white', 'shadow-md', 'shadow-amber-900/20');
+                    btn.classList.remove('bg-stone-900/80', 'text-stone-300');
+                } else {
+                    btn.classList.remove('bg-amber-600', 'text-white', 'shadow-md', 'shadow-amber-900/20');
+                    btn.classList.add('bg-stone-900/80', 'text-stone-300');
+                }
+            });
+            renderProducts(cat);
+        }
+
+        function handleAddToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (product.customizable) {
+                openCustomModal(product);
+            } else {
+                addToCart({
+                    id: product.id,
+                    name: product.name,
+                    basePrice: product.price,
+                    optionsText: '',
+                    totalPrice: product.price,
+                    cartItemId: Date.now()
+                });
+                showToast(`"${product.name}" добавлен в корзину!`, 'success');
+            }
+        }
+
+        function openCustomModal(product) {
+            currentCustomProduct = product;
+            selectedMilk = milkTypes[0];
+            selectedSyrup = syrupTypes[0];
+            document.getElementById('extraShotCheckbox').checked = false;
+
+            document.getElementById('modalTitle').textContent = `Настройка: ${product.name}`;
+
+            // Render Milk Options
+            const milkContainer = document.getElementById('milkOptions');
+            milkContainer.innerHTML = milkTypes.map((m, idx) => `
+                <button onclick="selectMilk(${idx})" class="milk-opt text-left p-2.5 rounded-xl border ${idx === 0 ? 'border-amber-500 bg-amber-500/10 text-amber-200' : 'border-stone-700 bg-stone-800 text-stone-300'} transition text-xs flex flex-col justify-between" data-idx="${idx}">
+                    <span class="font-medium">${m.name}</span>
+                    <span class="text-amber-400 mt-1">${m.price > 0 ? '+' + m.price + ' ₸' : 'Бесплатно'}</span>
+                </button>
+            `).join('');
+
+            // Render Syrup Options
+            const syrupContainer = document.getElementById('syrupOptions');
+            syrupContainer.innerHTML = syrupTypes.map((s, idx) => `
+                <button onclick="selectSyrup(${idx})" class="syrup-opt text-left p-2.5 rounded-xl border ${idx === 0 ? 'border-amber-500 bg-amber-500/10 text-amber-200' : 'border-stone-700 bg-stone-800 text-stone-300'} transition text-xs flex flex-col justify-between" data-idx="${idx}">
+                    <span class="font-medium">${s.name}</span>
+                    <span class="text-amber-400 mt-1">${s.price > 0 ? '+' + s.price + ' ₸' : '—'}</span>
+                </button>
+            `).join('');
+
+            updateModalPrice();
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function selectMilk(index) {
+            selectedMilk = milkTypes[index];
+            document.querySelectorAll('.milk-opt').forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.className = "milk-opt text-left p-2.5 rounded-xl border border-amber-500 bg-amber-500/10 text-amber-200 transition text-xs flex flex-col justify-between";
+                } else {
+                    btn.className = "milk-opt text-left p-2.5 rounded-xl border border-stone-700 bg-stone-800 text-stone-300 transition text-xs flex flex-col justify-between";
+                }
+            });
+            updateModalPrice();
+        }
+
+        function selectSyrup(index) {
+            selectedSyrup = syrupTypes[index];
+            document.querySelectorAll('.syrup-opt').forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.className = "syrup-opt text-left p-2.5 rounded-xl border border-amber-500 bg-amber-500/10 text-amber-200 transition text-xs flex flex-col justify-between";
+                } else {
+                    btn.className = "syrup-opt text-left p-2.5 rounded-xl border border-stone-700 bg-stone-800 text-stone-300 transition text-xs flex flex-col justify-between";
+                }
+            });
+            updateModalPrice();
+        }
+
+        document.getElementById('extraShotCheckbox').addEventListener('change', updateModalPrice);
+
+        function calculateModalTotal() {
+            if (!currentCustomProduct) return 0;
+            let total = currentCustomProduct.price;
+            total += selectedMilk.price;
+            total += selectedSyrup.price;
+            if (document.getElementById('extraShotCheckbox').checked) {
+                total += 150;
+            }
+            return total;
+        }
+
+        function updateModalPrice() {
+            const total = calculateModalTotal();
+            document.getElementById('modalTotalPrice').textContent = `${total} ₸`;
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function confirmAddToCart() {
+            const opts = [];
+            if (selectedMilk.id !== 'cow') opts.push(selectedMilk.name);
+            if (selectedSyrup.id !== 'none') opts.push(`Сироп ${selectedSyrup.name}`);
+            if (document.getElementById('extraShotCheckbox').checked) opts.push("Доп. шот эспрессо");
+
+            const optionsText = opts.length > 0 ? opts.join(', ') : '';
+
+            addToCart({
+                id: currentCustomProduct.id,
+                name: currentCustomProduct.name,
+                basePrice: currentCustomProduct.price,
+                optionsText: optionsText,
+                totalPrice: calculateModalTotal(),
+                cartItemId: Date.now()
+            });
+
+            closeModal();
+            showToast(`"${currentCustomProduct.name}" добавлен в корзину!`, 'success');
+        }
+
+        function addToCart(item) {
+            cart.push(item);
+            updateCartUI();
+        }
+
+        function removeFromCart(cartItemId) {
+            cart = cart.filter(item => item.cartItemId !== cartItemId);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            badge.textContent = cart.length;
+
+            const container = document.getElementById('cartItemsContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-stone-500">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 opacity-30"></i>
+                        <p class="text-sm">Ваша корзина пока пуста</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="bg-stone-800/80 border border-stone-700/60 p-3 rounded-xl flex items-center justify-between gap-3">
+                        <div class="flex-grow">
+                            <h4 class="font-medium text-stone-200 text-sm">${item.name}</h4>
+                            ${item.optionsText ? `<p class="text-xs text-amber-400/90 mt-0.5"><i class="fa-solid fa-sliders text-[10px] mr-1"></i>${item.optionsText}</p>` : ''}
+                            <span class="text-xs font-bold text-stone-400 mt-1 block">${item.totalPrice} ₸</span>
+                        </div>
+                        <button onclick="removeFromCart(${item.cartItemId})" class="text-stone-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const total = cart.reduce((sum, i) => sum + i.totalPrice, 0);
+            document.getElementById('cartTotalPrice').textContent = `${total} ₸`;
+        }
+
+        function openCart() {
+            document.getElementById('cartModal').classList.remove('hidden');
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').classList.add('hidden');
+        }
+
+        async function submitOrder() {
+            if (cart.length === 0) {
+                showToast("Добавьте хотя бы один товар в корзину", "error");
+                return;
+            }
+
+            let locationInfo = "";
+
+            if (currentOrderType === 'dine_in') {
+                const tableNum = document.getElementById('tableNumber').value.trim();
+                if (!tableNum) {
+                    showToast("Пожалуйста, укажите номер столика", "error");
+                    document.getElementById('tableNumber').focus();
+                    return;
+                }
+                locationInfo = `📍 *В КОФЕЙНЕ*\n🪑 *Столик:* № ${tableNum}`;
+            } else {
+                const phone = document.getElementById('deliveryPhone').value.trim();
+                const address = document.getElementById('deliveryAddress').value.trim();
+
+                if (!phone) {
+                    showToast("Пожалуйста, укажите номер телефона", "error");
+                    document.getElementById('deliveryPhone').focus();
+                    return;
+                }
+                if (!address) {
+                    showToast("Пожалуйста, укажите адрес доставки", "error");
+                    document.getElementById('deliveryAddress').focus();
+                    return;
+                }
+                locationInfo = `🛵 *ДОСТАВКА*\n📞 *Телефон:* ${phone}\n🏠 *Адрес:* ${address}`;
+            }
+
+            const comment = document.getElementById('orderComment').value.trim();
+            const btn = document.getElementById('sendOrderBtn');
+            const originalBtnText = btn.innerHTML;
+
+            // Loading State
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Отправка...`;
+
+            // Format Cart Items for Telegram
+            const itemsList = cart.map((item, index) => {
+                let text = `${index + 1}. *${item.name}* — ${item.totalPrice} ₸`;
+                if (item.optionsText) {
+                    text += `\n   └ _(${item.optionsText})_`;
+                }
+                return text;
+            }).join('\n');
+
+            const totalAmount = cart.reduce((sum, i) => sum + i.totalPrice, 0);
+
+            // Construct Telegram Message in Markdown
+            const message = 
+`☕ *НОВЫЙ ЗАКАЗ!*
+----------------------------------
+${locationInfo}
+
+🛒 *Состав заказа:*
+${itemsList}
+
+💰 *Итоговая сумма:* ${totalAmount} ₸
+📝 *Комментарий:* ${comment ? comment : '_Без комментария_'}
+----------------------------------
+⏰ _Время: ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}_`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    showToast("Заказ успешно отправлен!", "success");
+                    cart = [];
+                    document.getElementById('orderComment').value = '';
+                    document.getElementById('tableNumber').value = '';
+                    document.getElementById('deliveryPhone').value = '';
+                    document.getElementById('deliveryAddress').value = '';
+                    updateCartUI();
+                    closeCart();
+                } else {
+                    console.error("Telegram API Error:", data);
+                    showToast("Ошибка при отправке заказа. Попробуйте еще раз.", "error");
+                }
+            } catch (err) {
+                console.error("Network Error:", err);
+                showToast("Сетевая ошибка. Проверьте подключение к интернету.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnText;
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+            } else if (type === 'error') {
+                toastIcon.innerHTML = `<i class="fa-solid fa-circle-exclamation text-red-400"></i>`;
+            } else {
+                toastIcon.innerHTML = `<i class="fa-solid fa-info-circle text-amber-400"></i>`;
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            renderProducts('all');
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
